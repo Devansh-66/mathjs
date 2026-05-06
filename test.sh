@@ -1,12 +1,4 @@
 #!/usr/bin/env bash
-# Mars Challenge test harness.
-#
-# Usage:
-#   ./test.sh --output_path <path> base   # regression: existing test suite, JUnit XML
-#   ./test.sh --output_path <path> new    # new tests: kurtosis.test.js, JUnit XML
-#
-# Exit code 0 only when the selected suite passes.
-
 set -u
 
 OUTPUT_PATH=""
@@ -38,10 +30,11 @@ cd "$(dirname "$0")"
 
 REPORTER_OPTS="mochaFile=${OUTPUT_PATH}"
 
+MOCHA="./node_modules/.bin/mocha"
+
 case "$MODE" in
   base)
-    # Existing regression suite -- every test EXCEPT the new kurtosis tests.
-    npx mocha \
+    $MOCHA \
       --recursive \
       --reporter mocha-junit-reporter \
       --reporter-options "$REPORTER_OPTS" \
@@ -49,8 +42,7 @@ case "$MODE" in
       test/unit-tests
     ;;
   new)
-    # The Mars test patch -- only the kurtosis tests.
-    npx mocha \
+    $MOCHA \
       --reporter mocha-junit-reporter \
       --reporter-options "$REPORTER_OPTS" \
       test/unit-tests/function/statistics/kurtosis.test.js
